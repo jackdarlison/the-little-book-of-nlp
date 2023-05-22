@@ -11,3 +11,4 @@ create-missing = true
 
 [output.html]
 mathjax-support = true
+git-repository-url = "https://github.com/jackdarlison/the-little-book-of-nlp"
