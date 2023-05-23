@@ -1,11 +1,12 @@
 
-[Introduction](introduction.md)
+[Introduction](../README.md)
 
 # The Little Book of NLP
 
 - [Generic](generic/generic.md)
-	- [Embeddings](generic/embeddings.md)
+	- [Word Representations](generic/word-representations.md)
 	- [Metrics](generic/metrics.md)
+	- [Vector Similarity](generic/vector-similarity.md)
 - [Classical](classical/classical.md)
 	- [N-Grams](classical/n-grams.md)
 	- [Text Processing](classical/text-processing.md)

@@ -29,7 +29,14 @@ Perplexity is given as:
 
 Generalising to a bigram model gives:
 \\[ Perplexity(w_1...w_N)=\sqrt[N]{ \prod_{i=1}^{N} \frac {1} {P(w_i \vert  w_{i-1})} } \\]
-Note: \\( N \\) is the number of bigrams not words 
+
+The probability of a sequence of words using the Markov assumption (bigram model) is:
+
+\\[ P(w_{1:n}) = P(w_1)P(w_2 \vert w_1) \dots P(w_n \vert w_{n-1}) \\]
+
+Where there is a start if sentence marker:
+
+\\[ P(w_{1:n}) = P(w_1| \lt s \gt)P(w_2 \vert w_1) \dots P(w_n \vert w_{n-1}) \\]
 
 ## Precision, Recall, and F1
 
@@ -50,3 +57,16 @@ To adapt these to multi-class problems there are two methods:
 
 ## Cross Entropy Loss
 
+Cross entropy loss (negative log likelihood loss) measures how close an estimated output \\(\hat{\ y} \\) is to the correct output \\( y \\). We aim to minimise the negative log probability of the true \\( y \\) labels in the training data. Cross entropy loss is given as:
+
+\\[ L_{CE}(\hat{\ y}, y) = -( y \log \hat{\ y} + (1 - y) \log (1 - \hat{\ y}) )\\]
+
+When the classifier is binary, correct output being 0 or 1, the cross entropy loss is just \\(\ -\log\hat{\ y} \\)
+
+For multi-class output *Categorical Cross Entropy Loss* is given:
+
+\\[ L_{CCE}(\hat{\ y},y) = -[\sum_{i=1}^{N} y_i * log(\hat{y_i})] \\]
+
+To find the loss of a sequence of outputs, we average the cross entropy loss over all the output states:
+
+\\[ L = \frac{1}{T}\sum^T_{i=1}L_{CCE}(\hat{y_i}, y_i) \\]
