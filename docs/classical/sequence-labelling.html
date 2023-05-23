@@ -150,7 +150,6 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="sequence-labelling"><a class="header" href="#sequence-labelling">Sequence Labelling</a></h1>
-<p>TBC:  NER, HMMs, CRFs, BIO(ES) tags</p>
 <p>Sequence labelling is the task of assigning a label to each element in the input. </p>
 <h2 id="parts-of-speech-pos"><a class="header" href="#parts-of-speech-pos">Parts of Speech (POS)</a></h2>
 <p>POS tagging aims to assign a parts of speech tag to each word in the input which describes its grammatical function, e.g. nouns, determiners. POS tagging is a disambiguation task as one word may have more than one possible meaning, the goal is therefore to find the best sequence of tags for the situation</p>
@@ -163,6 +162,7 @@
 <p>A list of POS labels is known as a Tagset. The most common of these is the Penn Treebank which contains 45 different labels. </p>
 <p><img src="../images/penn-treebank-tags.png" alt="Penn Treebank Tags" /></p>
 <p>A good <em>baseline</em> model is to take the most common POS tag for a word, this has a surprisingly high accuracy of 92%</p>
+<h4 id="hidden-markov-models-hmms"><a class="header" href="#hidden-markov-models-hmms">Hidden Markov Models (HMMs)</a></h4>
 <p>A better model is to use a Hidden Markov Model (HMM), where we are trying to find the hidden states (POS tags) based on the observed emissions (words).</p>
 <p>HMMs make two assumptions:</p>
 <ul>
@@ -193,7 +193,25 @@
 <li>When all cells are computed, recursively backtrack using the pointers to find the most likely sequence of states. </li>
 </ul>
 <h2 id="named-entity-recognition-ner"><a class="header" href="#named-entity-recognition-ner">Named Entity Recognition (NER)</a></h2>
-<p>POS tagging can determine proper nouns, however, we may want to further disambiguate them into types of entities. </p>
+<p>POS tagging can determine proper nouns, however, we may want to further disambiguate them into types of entities. Named Entities are mostly all proper nouns, such as persons and locations, however may extend to times and dates.</p>
+<p>NER is a crucial step towards building semantic relations, extracting events and finding relations between participants. </p>
+<p>NERs may span over more than one word, meaning the task is now a span labelling problem rather than a word labelling problem. However, it is still implemented as a word-tag problem through the use of BIO tagging. </p>
+<p>BIO tagging prefixes each words NER label with its position in the NER span:</p>
+<ul>
+<li>B: indicates the beginning of an NER span</li>
+<li>I: indicates the inside/end of an NER span</li>
+<li>O: indicates the word is not within an NER span</li>
+</ul>
+<p>An extension, BIOES, adds:</p>
+<ul>
+<li>E: indicates the end of a span</li>
+<li>S: indicates a single word NER</li>
+</ul>
+<h4 id="conditional-random-fields-crfs"><a class="header" href="#conditional-random-fields-crfs">Conditional Random Fields (CRFs)</a></h4>
+<p>CRFs are used because we want to use Feature sets to represent words, allowing us to deal better with unknown words, which don't work well within HMMs. </p>
+<p>HMMs compute the best sequence (argmax Y of  P(Y|X)) based on Bayes rule and P(X|Y). In contrast CRF computes the sequence probability directly, by computing log-linear functions over local feature vectors which is aggregated and normalised to produce the global probability for the whole sequence. Weights are also created for each of the features, which are trained using gradient descent.</p>
+<p>Linear chain CRFs are decoded using the Viterbi algorithm, like HMMs. </p>
+<p><a href="../generic/word-representations.html">Feature vectors</a> are a common way of embedding words for use in computations. </p>
 
                     </main>
 

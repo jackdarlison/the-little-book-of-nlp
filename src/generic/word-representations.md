@@ -4,7 +4,9 @@ Word representations are methods of creating a numerical representation of a spa
 
 ## Feature Sets
 
-Feature sets are handcrafted lists of features, these features depend on the available information for the task. 
+Feature sets are handcrafted lists of features, each represented using a feature vector which are then aggregated (summed, etc.) to create a single vector for the feature set.
+
+Individual features depend on the available information for the task. 
 
 For example, common Named Entity Recognition features include:
 - Word shapes
