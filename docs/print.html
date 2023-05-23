@@ -496,7 +496,45 @@
 <p>The most simple scoring function is the dot product between the two vectors (known as dot product attention), however it is also possible to use its own set of weights to score the two vectors which are trained with the rest of the model</p>
 <p><strong>Cross attention</strong> is a more sophisticated form of attention, that is similar in nature to multi head <a href="neural/transformers.html">Self Attention</a>, but the queries come from the decoder and the keys and values come from the encoder. </p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="transformers"><a class="header" href="#transformers">Transformers</a></h1>
-<p>TBC: transformers, self-attention.</p>
+<p>LSTMs and GRUs can handle long distance information, however, as they are recurrent in nature they cannot be parallelised, making them scale poorly with long sequence. </p>
+<p>Transformers are an architecture that can handle both long distance information and be parallelised, making them the best model for language processing.</p>
+<p>In a transformer each input has access to all previous inputs, known as causal transformers (variations exist using different combinations of inputs), allowing the model to handle distance information. Most importantly, calculations performed for the current input input are independent of other inputs, making the system able to be parallelised. </p>
+<p>The core idea behind using other inputs to calculate the current input is the <strong>self-attention</strong>, which compares the current input to other inputs revealing their relevance in the current context. </p>
+<p>Transformers are contained in a modular block, taking an input sequence and outputting a sequence of the same length allowing them to be stacked. The transformer block consists of 4 layers:</p>
+<ol>
+<li>Self-attention layer</li>
+<li>Layer normalise</li>
+<li>Feedforward layer</li>
+<li>Layer normalise</li>
+</ol>
+<p>Each layer feeds into the next layer. Residual connections are also added around the self-attention and feedforward layers (input is added to the output vector), which allows higher layers direct access to the information from lower layers. The normalisation keeps the values of the layer outputs and residual connections in a range that facilitates gradient based learning. </p>
+<p>Layer normalisation is implemented by subtracting the mean and dividing by the standard deviation, making a distribution with a mean of 0 and a standard deviation of 1. Gain and offset parameters are added after</p>
+<h2 id="self-attention"><a class="header" href="#self-attention">Self-attention</a></h2>
+<p>Self-attention is a more sophisticated variation of the attention used within encoder-decoder based models</p>
+<p>In self-attention each input will play three different roles during the self-attention process:</p>
+<ul>
+<li><strong>Query</strong>: the current focus (i.e. input) of attention being compared to the other inputs</li>
+<li><strong>Key</strong>: an input being compared to the current focus</li>
+<li><strong>Value</strong>: the value used to compute the output for the current focus of attention</li>
+</ul>
+<p>To represent the roles a weight matrix will be created for each, which will be used to project the input \( x_i \) onto its representation of each role. \[q_i = W^Qx_i;\ k_i = W^Kx_i;\ v_i = W^Vx_i \]</p>
+<p>Similar to encoder-decoder attention we need to calculate a relevance score for the current focus input \( x_i \) and each context input \( x_j \). However the scores are normalised by the dimensionality of the key (and query) vectors to avoid numerical issues</p>
+<p>\[ score(x_i, x_j) = \frac{q_i \cdot k_j}{\sqrt{d_k}} \]</p>
+<p>This is then softmax normalised and multiplied by \( v_i \)</p>
+<p>Although, a each output can be computed independently there is no need to process each pair of inputs individually. We can instead represent the input as a matrix, and create matrices of the query, key, and value representations. This allows us to use efficient matrix multiplication implementations instead! </p>
+<p>\[ Q = XW^Q;\ K=XW^K;\ V=XW^V \]</p>
+<p>Given these matrices we can neatly represent the process of self attention as a single function:</p>
+<p>\[ \text{SelfAttention}(Q, K, V) = \text{softmax}(\frac{QK^T}{\sqrt{d_k}})V \]</p>
+<p>As all inputs are being used as keys for all queries, if only preceding inputs should be used then the top-right triangle of the self-attention matrix should be set to negative infinity (which will become 0 with softmax)</p>
+<h4 id="multi-head-attention"><a class="header" href="#multi-head-attention">Multi-head Attention</a></h4>
+<p>Different words in a sentence can relate to each other is in different ways simultaneously; it is difficult for a single self-attention layer to capture all these meanings. Multi-head attention solves this by using multiple parallel self-attentions layers at the same depth.</p>
+<p>Each self attention layer is given its own set of query, key, and value matrices and undergoes self-attention in the same way. The output of each self-attention is then concatenated together and projected down to the original input dimension using another set of weights \( W^O \)</p>
+<h4 id="positional-embeddings"><a class="header" href="#positional-embeddings">Positional Embeddings</a></h4>
+<p>So far transformers have had no notion of where each input is within the input sequence, unlike RNNs where this is built into the recurrent structure of the network. </p>
+<p>To achieve positional information we create a positional embedding for each word. This is achieved through  static functions which map integers to real values vectors such they retain positional relationships, the original transformer paper used a mixture of sine and cosine functions. This positional vectors share the same dimensions as the word embeddings and they are combined through addition. </p>
+<h4 id="transformers-as-language-models"><a class="header" href="#transformers-as-language-models">Transformers as Language Models</a></h4>
+<p>As autoregressive generation requires the calculation of the previous input, using transformers to generate text is not able to be made parallel. </p>
+<p>It is still possible to train the transformers in parallel as using teacher forcing allows all calculations to be independent. We can then use averaged cross entropy loss over the predicted outputs to adjust the weights. </p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="information-extraction"><a class="header" href="#information-extraction">Information Extraction</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="machine-translation"><a class="header" href="#machine-translation">Machine Translation</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="semantic-role-labelling"><a class="header" href="#semantic-role-labelling">Semantic Role Labelling</a></h1>
