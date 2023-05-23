@@ -150,7 +150,64 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="recurrent-neural-networks-rnns"><a class="header" href="#recurrent-neural-networks-rnns">Recurrent Neural Networks (RNNs)</a></h1>
-<p>TBC: RNNs, cross-attention, applications</p>
+<p>Language is inherently temporal in nature, meaning we want to be able to process words in relation to words which come before it and potentially after. </p>
+<p>Simple recurrent networks (Elman Networks) achieve temporal processing by introducing recurrent connections. We model each input in the sequence as happening at a time \( t \) and the recurrent connections allow us to use the output of the hidden layer at \( t-1 \) as another input to the hidden layer at \( t \). Therefore information from previous inputs is aggregated and passed into future processing. </p>
+<p>The complexity of the recurrent connections is reduced by unravelling the connections through time, creating a hidden layer of individual nodes which process the input \( t \) and previous hidden layer \( t-1 \). Training is then done similar to standard neural networks, propagating the loss through the time states and back-propagating to the start, altering the weights. </p>
+<p>As recurrent networks rely on processing previous hidden states to calculate the current state, they can not be parallelised making large networks slow to compute. </p>
+<h2 id="long-short-term-memory-lstm-cells"><a class="header" href="#long-short-term-memory-lstm-cells">Long-Short Term Memory (LSTM) cells</a></h2>
+<p>LSTM cells are a more sophisticated form of recurrent connections, designed to give RNNs to ability to learn and forget information as well as solve the limited information retention that simple recurrent networks have. </p>
+<p>This is achieved by the addition of the context output, which is also passed through time like the hidden layer outputs. </p>
+<p><img src="../images/lstm.png" alt="LSTM" /></p>
+<p>Information is added and removed from the context and hidden vectors through the use of gates, which consist of sigmoid activations and element-wise multiplication. </p>
+<p>As LSTMs are modular in nature, so they can be unrolled through time like simple RNNs, just with the addition of a new input and output.</p>
+<p>LSTMs (and its simpler version the Gated Recurrent Unit,  GRU) are the standard architecture for any recurrent based network</p>
+<h2 id="rnn-architecture"><a class="header" href="#rnn-architecture">RNN Architecture</a></h2>
+<h4 id="stacked-rnns"><a class="header" href="#stacked-rnns">Stacked RNNs</a></h4>
+<p>As RNNs can output at each hidden state we can stack multiple layers of RNNs on top of each other, using the output from one layer as the input in the layer above. </p>
+<p>This allows us to capture varying levels of abstraction across the levels, similar to how human perception works. Generally outperforming single layered networks</p>
+<p>However, training costs rise quickly with the number of layers</p>
+<h4 id="bidirectional-rnns"><a class="header" href="#bidirectional-rnns">Bidirectional RNNs</a></h4>
+<p>Many applications have access to the whole input instead of just the preceding input. In these it would make sense to also use the right-to-left context to aid in predicting. In addition one directional RNNs naturally reflect more information about the end of a sentence than the beginning, a problem bidirectional solves. </p>
+<p>This is achieved by training to RNNs, one processes the sequence forward and one processes it in reverse. The final hidden layer (or pooled outputs) are then combined. </p>
+<p>Concatenation is the most common form of combining the two outputs, however, other methods such as element-wise addition or multiplication are acceptable. </p>
+<h2 id="recurrent-network-patterns"><a class="header" href="#recurrent-network-patterns">Recurrent Network Patterns</a></h2>
+<p>Recurrent networks can be assembled in multiple different ways, each searching a specific task. </p>
+<h4 id="for-language-models"><a class="header" href="#for-language-models">For Language models</a></h4>
+<p><img src="../images/language-modelling.png" alt="Language Modelling" /></p>
+<p>To use RNNs for language models, we first input a start of sequence token (and some context) where the output (softmaxed) is then the predicted next word. At the next time step the previous prediction is used as the input, where this process repeats until a sequence length is reached or a end of sequence token is generated. </p>
+<p>This process of using the previous output as the next input is known as <strong>autoregressive generation</strong></p>
+<p>To train, teacher forcing is used which uses the correct input instead of the previous predicted word. This stops the model drifting to far from what is expected. To adjust the weights averaged cross entropy loss over the predicted words is used. </p>
+<p><em>Weight tying</em> can reduce the number of parameters by using the same embedding matrix for the input for the output weights when predicting the next word.</p>
+<h4 id="for-sequence-labelling"><a class="header" href="#for-sequence-labelling">For Sequence Labelling</a></h4>
+<p><img src="../images/sequence-labelling.png" alt="Sequence labelling" /></p>
+<p>For sequence labelling, the output of each hidden layer is used to predict the label for each input token.</p>
+<h4 id="for-sequence-classification"><a class="header" href="#for-sequence-classification">For Sequence classification</a></h4>
+<p><img src="../images/sequence-classification.png" alt="Sequence Classification" /></p>
+<p>For sequence labelling, all but the last hidden layers are ignored. The last hidden layer is fed into a separate MLP+softmax classifier. </p>
+<p>The cross entropy loss from the classifier is used to train the whole network, known as end-to-end training</p>
+<p>Instead of using the last hidden state we can use a pooling function to aggregate all the hidden states such as:</p>
+<ul>
+<li>element-wise mean</li>
+<li>element-wise max</li>
+<li>element-wise addition</li>
+</ul>
+<h4 id="for-sequence-to-sequence"><a class="header" href="#for-sequence-to-sequence">For Sequence-to-Sequence</a></h4>
+<p><img src="../images/encoder-decoder.png" alt="Encoder-Decoder" /></p>
+<p>Sequence to sequence (lengths are each may be different) problems such as machine translation combine two RNNs. The first network, the <strong>encoder</strong>, encodes the input sequence into a single vector known as the context vector, which represents all the information the second RNN needs to know about the first. The second network, the <strong>decoder</strong>, combines the context vector to generate the output sequence</p>
+<p>The <em>context vector</em> can be created either by using the final hidden state or by pooling (max, mean, add, ...) all the hidden states of the encoder. </p>
+<p>In addition the context vector is usually given to all states of the decoder directly, to ensure that its influence remains present thought out the entire decoder sequence. </p>
+<p>Training the network is done end-to-end, using the averaged cross entropy loss of the decoder outputs to adjust the weights. Teacher forcing is also used in the decoder. </p>
+<h2 id="attention"><a class="header" href="#attention">Attention</a></h2>
+<p>In encoder-decoder models the context vector acts as a bottleneck, as it needs to represent everything there is to know about the input sequence in a single vector. </p>
+<p>Attention solves this problem by taking a weighted sum over the hidden states of the encoder as each time step in the decoder. </p>
+<p>Attention follows a three step process:</p>
+<ul>
+<li>Compute the relevance (score) of the previous decoder hidden state and each of the encoder hidden states.</li>
+<li>Softmax the scores to create a probability distribution</li>
+<li>Calculate the context vector for the current decoder state by using the distribution to take a weighted average over all the encoder hidden states. </li>
+</ul>
+<p>The most simple scoring function is the dot product between the two vectors (known as dot product attention), however it is also possible to use its own set of weights to score the two vectors which are trained with the rest of the model</p>
+<p><strong>Cross attention</strong> is a more sophisticated form of attention, that is similar in nature to multi head <a href="transformers.html">Self Attention</a>, but the queries come from the decoder and the keys and values come from the encoder. </p>
 
                     </main>
 

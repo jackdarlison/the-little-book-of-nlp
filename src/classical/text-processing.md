@@ -48,5 +48,5 @@ To do this minimum edit distance is used, which scores the number of edits neede
 
 This application uses dynamic programming, by recursively finding the best substring and building up to the whole string. Best substrings are scored by the lowest operation cost. 
 
-To create the best alignment between two strings, a table is built where each cell is the substrings score, and back pointers keep track of the previous state. Then the lowest cost path back through the table is the best alignment
+To create the best alignment between two strings, a table is built where each cell is the substrings score, and back pointers are used to keep track of the previous state. Then the lowest cost path back through the table is the best alignment.
 
