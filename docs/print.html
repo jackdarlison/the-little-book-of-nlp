@@ -277,7 +277,9 @@
 <p>However, this is method is biased towards longer vectors. <strong>Cosine similarity</strong> or the normalised dot product is commonly used instead:</p>
 <p>\[ \text{cosine}(\theta) = \frac{a \cdot b}{|a||b|} \]</p>
 <p>Where vectors are pre-normalised these metrics are interchangeable.</p>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><h1 id="n-grams"><a class="header" href="#n-grams">N-Grams</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="classical-nlp"><a class="header" href="#classical-nlp">Classical NLP</a></h1>
+<p>This section covers areas of NLP that exist outside of deep neural networks. </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="n-grams"><a class="header" href="#n-grams">N-Grams</a></h1>
 <p>A language model is one that assigns a probability to each possible next word in a sequence. </p>
 <p>The probability of a sequence of words is the joint probability of each word given all previous words.</p>
 <p>\[ P(w_{1:n}) = P(w_1)P(w_2 \vert w_1)P(w_3 \vert w_{1:2})...P(w_n \vert w_{1:n-1}) \]</p>
@@ -319,7 +321,67 @@
 <li>Stupid backoff</li>
 <li>Kesner-Ney Smoothing</li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div><div style="break-before: page; page-break-before: always;"></div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="text-processing"><a class="header" href="#text-processing">Text Processing</a></h1>
+<p>TBC:  Regex, tokenisation, text similarity</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="sequence-labelling"><a class="header" href="#sequence-labelling">Sequence Labelling</a></h1>
+<p>TBC:  NER, HMMs, CRFs, BIO(ES) tags</p>
+<p>Sequence labelling is the task of assigning a label to each element in the input. </p>
+<h2 id="parts-of-speech-pos"><a class="header" href="#parts-of-speech-pos">Parts of Speech (POS)</a></h2>
+<p>POS tagging aims to assign a parts of speech tag to each word in the input which describes its grammatical function, e.g. nouns, determiners. POS tagging is a disambiguation task as one word may have more than one possible meaning, the goal is therefore to find the best sequence of tags for the situation</p>
+<p>POS tags can be split into three types of class:</p>
+<ul>
+<li>Open classes: New words are frequently being created or borrowed, such as nouns, verbs, adjectives, adverbs, interjections</li>
+<li>Closed classes: Mostly fixed vocabulary, typically function words used for structuring grammar, e.g. pronouns, adpositions, conjunctions...</li>
+<li>Other: symbols and punctuation</li>
+</ul>
+<p>A list of POS labels is known as a Tagset. The most common of these is the Penn Treebank which contains 45 different labels. </p>
+<p><img src="classical/../images/penn-treebank-tags.png" alt="Penn Treebank Tags" /></p>
+<p>A good <em>baseline</em> model is to take the most common POS tag for a word, this has a surprisingly high accuracy of 92%</p>
+<p>A better model is to use a Hidden Markov Model (HMM), where we are trying to find the hidden states (POS tags) based on the observed emissions (words).</p>
+<p>HMMs make two assumptions:</p>
+<ul>
+<li>Markov Assumption: The current state only depends on the previous</li>
+<li>Output independence: The output observation (word) only depends on the state that produced it (the POS tag)</li>
+</ul>
+<p>HMMs consist of 5 components:</p>
+<ul>
+<li>\( Q \): a set of \( N \) states</li>
+<li>\( A \): a transition probability matrix, representing the probability of moving from one state to another</li>
+<li>\( O \): a sequence of \( T \) observations drawn of the vocabulary</li>
+<li>\( B \): a sequence of observation (emission) probabilities, each representing the probability of an observation being generated at a state</li>
+<li>\( \pi \): the initial probability distribution for the starting state, sums to 1.</li>
+</ul>
+<p>To do POS tagging we aim to <em>decode</em> the states of the HMM based on the observations</p>
+<p>The most probable sequence of tags, using a bigram model, is defined as:</p>
+<p>\[  \hat{t}_{1:n} \]</p>
+<p>\[ =\underset{t_{1:n}}{\text{argmax}} \prod^n_{i=1}P(w_i|t_i)P(t_i|t_{i-1}) \]</p>
+<p>Where:</p>
+<ul>
+<li>Emission probability \( P(w_i|t_i) \) is given as \( \frac{C(t_i, w_i)}{C(t_i)} \)</li>
+<li>Transition probability \( P(t_i | t_{i-1}) \) is given as \( \frac{C(t_{i-1}, t_i)}{C(t_{i-1})} \)</li>
+</ul>
+<p>To calculate the most probable sequence of tags the Viterbi algorithm is used, which is an instance of dynamic programming. Viterbi works by:</p>
+<ul>
+<li>Filling a probability matrix, where each cell \( (t, j) \) represents the probability of that the HMM is in state \( j \) after seeing the first \( t \) observations and passing though the most probable sequence \( q_1, \dots, q_{t-1} \) (i.e. the max of all possible sequences) towards the current state. This is computed recursively, given the previous state through, transmission probability, and emission probability: \( v_t(j) = \max^N_{i=1} v_{t-1}(i)A_{ij}B_j(O_t)) \). </li>
+<li>At each step keep track of the previous state</li>
+<li>When all cells are computed, recursively backtrack using the pointers to find the most likely sequence of states. </li>
+</ul>
+<h2 id="named-entity-recognition-ner"><a class="header" href="#named-entity-recognition-ner">Named Entity Recognition (NER)</a></h2>
+<p>POS tagging can determine proper nouns, however, we may want to further disambiguate them into types of entities. </p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="grammars"><a class="header" href="#grammars">Grammars</a></h1>
+<p>TBC: constituency grammars, CKY parsing, dependency grammars</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="neural-nlp"><a class="header" href="#neural-nlp">Neural NLP</a></h1>
+<p>This section covers deep neural networks and their applications in NLP.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="recurrent-neural-networks-rnns"><a class="header" href="#recurrent-neural-networks-rnns">Recurrent Neural Networks (RNNs)</a></h1>
+<p>TBC: RNNs, cross-attention, applications</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="transformers"><a class="header" href="#transformers">Transformers</a></h1>
+<p>TBC: transformers, self-attention.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="information-extraction"><a class="header" href="#information-extraction">Information Extraction</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="machine-translation"><a class="header" href="#machine-translation">Machine Translation</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="semantic-role-labelling"><a class="header" href="#semantic-role-labelling">Semantic Role Labelling</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="word-sense-disambiguation"><a class="header" href="#word-sense-disambiguation">Word Sense Disambiguation</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="question-answering"><a class="header" href="#question-answering">Question Answering</a></h1>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
