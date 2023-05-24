@@ -347,13 +347,15 @@
 </ul>
 <h2 id="text-processing-1"><a class="header" href="#text-processing-1">Text Processing</a></h2>
 <p>Given a text, we may want to separate the text into individual words. This process is known as word tokenisation, other forms exist which may tokenise the text into sub-word pieces or spans of words.</p>
-<p>Byte Pair Encoding is an automated method of tokenising a text into sub-words. It works as follows:</p>
+<p><strong>Byte Pair Encoding (BPE)</strong> is an automated method of tokenising a text into sub-words. It works as follows:</p>
 <ul>
 <li>Start with a set of all characters, the vocabulary.</li>
 <li>Split the text into characters</li>
 <li>Find the most frequent concatenation of two tokens from the vocabulary present within words in the text, merge them, and add the merged token into the vocabulary</li>
 <li>repeat until \( k \) merges have been made.</li>
 </ul>
+<p><strong>Wordpiece</strong> tokenisation is similar to BPE but instead of concatenating the most frequent, a language model is trained and the concatenation which improves it the most is chosen. Repeat until there are a certain number of tokens.</p>
+<p><strong>Unigram</strong> or <strong>SentencePiece</strong> tokenisation starts from the opposite side to the previous tokenisation. A giant vocabulary is created using individual characters and frequent sequences of characters (including spaces). Tokens are iteratively removed until a desired vocabulary size is created</p>
 <p>It may be useful to normalise words into a single form, of which there are two methods:</p>
 <ul>
 <li>Lemmas are the root (dictionary) form of words, e.g. sing is the lemma of sing, sang, and sung</li>
@@ -543,6 +545,11 @@
 </ul>
 <p>The most simple scoring function is the dot product between the two vectors (known as dot product attention), however it is also possible to use its own set of weights to score the two vectors which are trained with the rest of the model</p>
 <p><strong>Cross attention</strong> is a more sophisticated form of attention, that is similar in nature to multi head <a href="neural/transformers.html">Self Attention</a>, but the queries come from the decoder and the keys and values come from the encoder. </p>
+<h2 id="beam-search"><a class="header" href="#beam-search">Beam Search</a></h2>
+<p>So far in language models, those that generate the next probable word, the most likely word from the softmax distribution has been chosen. This method is inherently greedy, picking the best word at each state rather than the best word for the whole sequence at this point. </p>
+<p>Exhaustively searching all possibilities is not feasible, so instead <strong>Beam search</strong> is used as a trade off between search space and computation. </p>
+<p>At each output step beam search keeps track of the \( k \) best sequences. These are calculated by the joint probability of all the word probabilities in them. At each output the next word is calculated from the \( k \) sequences and the new \( k \) are chosen, ensuring the search width is never more than \( k \).</p>
+<p>A sequence is removed when one of the best ends with a end of sequence token, it is saved for as a potential output sequence and 1 is subtracted from \( k \). Once all \( k \) sequences are found we can either pass all of them, a subset, or the best downstream</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="transformers"><a class="header" href="#transformers">Transformers</a></h1>
 <p>LSTMs and GRUs can handle long distance information, however, as they are recurrent in nature they cannot be parallelised, making them scale poorly with long sequence. </p>
 <p>Transformers are an architecture that can handle both long distance information and be parallelised, making them the best model for language processing.</p>
@@ -585,6 +592,25 @@
 <p>It is still possible to train the transformers in parallel as using teacher forcing allows all calculations to be independent. We can then use averaged cross entropy loss over the predicted outputs to adjust the weights. </p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="information-extraction"><a class="header" href="#information-extraction">Information Extraction</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="machine-translation"><a class="header" href="#machine-translation">Machine Translation</a></h1>
+<p>Machine translation is a sequence-to-sequence based task, therefore making use of the encoder-decoder pattern. </p>
+<p>Machine translations are trained on parallel corpuses, or bi-texts. </p>
+<h4 id="language-differences"><a class="header" href="#language-differences">Language Differences</a></h4>
+<p>Languages have many differences which make the translation from one to another difficult, such as:</p>
+<ul>
+<li>Morphological differences: characters per word</li>
+<li>Event-framing: e.g. verb or satellite</li>
+<li>Word order typology: e.g. Subject-Verb-Object or SOV or VSO...</li>
+</ul>
+<h4 id="low-resource-translating"><a class="header" href="#low-resource-translating">Low Resource Translating</a></h4>
+<p>Finding datasets suitable for training large encoder-decoder models is not always easy.</p>
+<p><strong>Back translation</strong> can be used when we have small parallel corpuses but have access to larger target mono-lingual corpuses. The parallel corpus is extended by:</p>
+<ul>
+<li>Training a target-to-source model on the small bi-text</li>
+<li>Translate the mono-lingual corpus to the source language, and add the aligned sentence to the bi-text</li>
+<li>Train a source-to-target model on the extended bi-text</li>
+</ul>
+<p><strong>Multilingual</strong> models can be trained given many parallel sentences in different pairs of languages. This can improve the performance on low resource languages by drawing on information used for other translations.</p>
+<p>There are however <strong>Sociotechnical Issues</strong> as low resource language dataset may not be accurate or even correct. In addition, there is a large focus on english-other and little data for other language pairs</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="semantic-role-labelling"><a class="header" href="#semantic-role-labelling">Semantic Role Labelling</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="word-sense-disambiguation"><a class="header" href="#word-sense-disambiguation">Word Sense Disambiguation</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="question-answering"><a class="header" href="#question-answering">Question Answering</a></h1>

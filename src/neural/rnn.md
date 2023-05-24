@@ -104,3 +104,14 @@ Attention follows a three step process:
 The most simple scoring function is the dot product between the two vectors (known as dot product attention), however it is also possible to use its own set of weights to score the two vectors which are trained with the rest of the model
 
 **Cross attention** is a more sophisticated form of attention, that is similar in nature to multi head [Self Attention](transformers.md), but the queries come from the decoder and the keys and values come from the encoder. 
+
+## Beam Search
+
+So far in language models, those that generate the next probable word, the most likely word from the softmax distribution has been chosen. This method is inherently greedy, picking the best word at each state rather than the best word for the whole sequence at this point. 
+
+Exhaustively searching all possibilities is not feasible, so instead **Beam search** is used as a trade off between search space and computation. 
+
+At each output step beam search keeps track of the \\( k \\) best sequences. These are calculated by the joint probability of all the word probabilities in them. At each output the next word is calculated from the \\( k \\) sequences and the new \\( k \\) are chosen, ensuring the search width is never more than \\( k \\).
+
+A sequence is removed when one of the best ends with a end of sequence token, it is saved for as a potential output sequence and 1 is subtracted from \\( k \\). Once all \\( k \\) sequences are found we can either pass all of them, a subset, or the best downstream
+

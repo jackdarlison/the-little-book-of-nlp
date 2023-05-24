@@ -150,6 +150,25 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="machine-translation"><a class="header" href="#machine-translation">Machine Translation</a></h1>
+<p>Machine translation is a sequence-to-sequence based task, therefore making use of the encoder-decoder pattern. </p>
+<p>Machine translations are trained on parallel corpuses, or bi-texts. </p>
+<h4 id="language-differences"><a class="header" href="#language-differences">Language Differences</a></h4>
+<p>Languages have many differences which make the translation from one to another difficult, such as:</p>
+<ul>
+<li>Morphological differences: characters per word</li>
+<li>Event-framing: e.g. verb or satellite</li>
+<li>Word order typology: e.g. Subject-Verb-Object or SOV or VSO...</li>
+</ul>
+<h4 id="low-resource-translating"><a class="header" href="#low-resource-translating">Low Resource Translating</a></h4>
+<p>Finding datasets suitable for training large encoder-decoder models is not always easy.</p>
+<p><strong>Back translation</strong> can be used when we have small parallel corpuses but have access to larger target mono-lingual corpuses. The parallel corpus is extended by:</p>
+<ul>
+<li>Training a target-to-source model on the small bi-text</li>
+<li>Translate the mono-lingual corpus to the source language, and add the aligned sentence to the bi-text</li>
+<li>Train a source-to-target model on the extended bi-text</li>
+</ul>
+<p><strong>Multilingual</strong> models can be trained given many parallel sentences in different pairs of languages. This can improve the performance on low resource languages by drawing on information used for other translations.</p>
+<p>There are however <strong>Sociotechnical Issues</strong> as low resource language dataset may not be accurate or even correct. In addition, there is a large focus on english-other and little data for other language pairs</p>
 
                     </main>
 

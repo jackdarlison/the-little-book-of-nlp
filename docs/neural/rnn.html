@@ -208,6 +208,11 @@
 </ul>
 <p>The most simple scoring function is the dot product between the two vectors (known as dot product attention), however it is also possible to use its own set of weights to score the two vectors which are trained with the rest of the model</p>
 <p><strong>Cross attention</strong> is a more sophisticated form of attention, that is similar in nature to multi head <a href="transformers.html">Self Attention</a>, but the queries come from the decoder and the keys and values come from the encoder. </p>
+<h2 id="beam-search"><a class="header" href="#beam-search">Beam Search</a></h2>
+<p>So far in language models, those that generate the next probable word, the most likely word from the softmax distribution has been chosen. This method is inherently greedy, picking the best word at each state rather than the best word for the whole sequence at this point. </p>
+<p>Exhaustively searching all possibilities is not feasible, so instead <strong>Beam search</strong> is used as a trade off between search space and computation. </p>
+<p>At each output step beam search keeps track of the \( k \) best sequences. These are calculated by the joint probability of all the word probabilities in them. At each output the next word is calculated from the \( k \) sequences and the new \( k \) are chosen, ensuring the search width is never more than \( k \).</p>
+<p>A sequence is removed when one of the best ends with a end of sequence token, it is saved for as a potential output sequence and 1 is subtracted from \( k \). Once all \( k \) sequences are found we can either pass all of them, a subset, or the best downstream</p>
 
                     </main>
 

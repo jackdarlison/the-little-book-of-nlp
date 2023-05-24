@@ -27,11 +27,15 @@ Some useful pattern notations:
 
 Given a text, we may want to separate the text into individual words. This process is known as word tokenisation, other forms exist which may tokenise the text into sub-word pieces or spans of words.
 
-Byte Pair Encoding is an automated method of tokenising a text into sub-words. It works as follows:
+**Byte Pair Encoding (BPE)** is an automated method of tokenising a text into sub-words. It works as follows:
 - Start with a set of all characters, the vocabulary.
 - Split the text into characters
 - Find the most frequent concatenation of two tokens from the vocabulary present within words in the text, merge them, and add the merged token into the vocabulary
 - repeat until \\( k \\) merges have been made.
+
+**Wordpiece** tokenisation is similar to BPE but instead of concatenating the most frequent, a language model is trained and the concatenation which improves it the most is chosen. Repeat until there are a certain number of tokens.
+
+**Unigram** or **SentencePiece** tokenisation starts from the opposite side to the previous tokenisation. A giant vocabulary is created using individual characters and frequent sequences of characters (including spaces). Tokens are iteratively removed until a desired vocabulary size is created
 
 It may be useful to normalise words into a single form, of which there are two methods:
 - Lemmas are the root (dictionary) form of words, e.g. sing is the lemma of sing, sang, and sung
