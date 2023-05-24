@@ -618,6 +618,23 @@
 <p><strong>Multilingual</strong> models can be trained given many parallel sentences in different pairs of languages. This can improve the performance on low resource languages by drawing on information used for other translations.</p>
 <p>There are however <strong>Sociotechnical Issues</strong> as low resource language dataset may not be accurate or even correct. In addition, there is a large focus on english-other and little data for other language pairs</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="semantic-role-labelling"><a class="header" href="#semantic-role-labelling">Semantic Role Labelling</a></h1>
+<p>Semantic roles are the different roles that an argument can take of a predicate in an event. </p>
+<p><strong>Thematic roles</strong> capture the semantic commonality around participants in an event.  E.g. Agent, experiencer, theme, goal...</p>
+<p><strong>PropBank</strong> is a resource of semantic role annotated sentences. It focuses on verbs, giving a set of arguments and modifiers.</p>
+<p>Arg0 and Arg1 are present on most verbs and define the agent (causer) and patient (receiver), other arguments are verb specific. </p>
+<p>ArgMs are used to indicate modifiers such as time and location, common across all events</p>
+<p><strong>FrameNet</strong> is a another semantic role resource however focuses on specific word senses instead of words. Frames are a set of word senses that share the same core roles (similar to arguments) and non-core roles (similar to modifiers)</p>
+<p><strong>Semantic Role Labelling (SRL)</strong> is the task of assigning roles to spans of text in sentences. Making it a sequence labelling task. </p>
+<p>SRL can be done using feature based methods, however, it is more commonly done as neural system. </p>
+<p>The input consists of the event constituent (sentence normally) followed by a separator and the prediciate again</p>
+<p>Follows the steps:</p>
+<ul>
+<li>BERT embed the input, concatenating a mark for the predicate. </li>
+<li>The embeddings are then fed into a neural encoder such as BiLSTM or transformer layers. </li>
+<li>Concatenate each hidden layer output with the predicate output</li>
+<li>The output is then fed into a MLP + softmax to classify </li>
+</ul>
+<p>The output is given as BIO tags from SRL resources such as PropBank or FrameNet. </p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="word-sense-disambiguation"><a class="header" href="#word-sense-disambiguation">Word Sense Disambiguation</a></h1>
 <p>Words are ambiguous as the same word may have multiple meanings, <strong>Word Sense Disambiguation (WSD)</strong> is the process of deciding the sense of a word given its context.</p>
 <p><strong>WordNet</strong> is a large hand-annotated corpus giving word sense definitions and relations between word senses. A <strong>synset</strong> is a collection of word senses which all share the same meaning, and a gloss (description) of the general meaning of the set.</p>
