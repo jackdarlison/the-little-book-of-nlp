@@ -69,7 +69,7 @@ For sequence labelling, the output of each hidden layer is used to predict the l
 
 ![Sequence Classification](../images/sequence-classification.png)
 
-For sequence labelling, all but the last hidden layers are ignored. The last hidden layer is fed into a separate MLP+softmax classifier. 
+For sequence classification, all but the last hidden layers are ignored. The last hidden layer is fed into a separate MLP+softmax classifier. 
 
 The cross entropy loss from the classifier is used to train the whole network, known as end-to-end training
 

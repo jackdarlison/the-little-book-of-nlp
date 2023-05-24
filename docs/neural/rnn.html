@@ -183,7 +183,7 @@
 <p>For sequence labelling, the output of each hidden layer is used to predict the label for each input token.</p>
 <h4 id="for-sequence-classification"><a class="header" href="#for-sequence-classification">For Sequence classification</a></h4>
 <p><img src="../images/sequence-classification.png" alt="Sequence Classification" /></p>
-<p>For sequence labelling, all but the last hidden layers are ignored. The last hidden layer is fed into a separate MLP+softmax classifier. </p>
+<p>For sequence classification, all but the last hidden layers are ignored. The last hidden layer is fed into a separate MLP+softmax classifier. </p>
 <p>The cross entropy loss from the classifier is used to train the whole network, known as end-to-end training</p>
 <p>Instead of using the last hidden state we can use a pooling function to aggregate all the hidden states such as:</p>
 <ul>
