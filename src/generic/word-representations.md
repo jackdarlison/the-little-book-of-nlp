@@ -96,3 +96,15 @@ Embeddings encode properties such as:
 
 With multiple corpuses (e.g. historical, cultural, document type, ...) analysing the differences in word embeddings can show the change in meaning and associations words may have
 
+#### Pre-trained Embeddings
+
+It is common to apply pre-trained embeddings to niche NLP applications. 
+
+This not only saves on training time, but allows embeddings to be trained on a much larger corpus than would be feasible for your specific application
+
+Word2vec, GloVe, and BERT all supply pre-trained embeddings from multiple difference corpuses and vector sizes. 
+
+It may also be beneficial to unfix the weights in the final few layers of the embeddings so that the embeddings can adapt to the specific genre of the training corpus being used. 
+
+Adding layers on top of the embeddings can also be useful for this task or to transform the embeddings into a different style (e.g. fencepost spans)
+

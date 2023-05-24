@@ -230,6 +230,12 @@
 <li>Implicit corpus bias</li>
 </ul>
 <p>With multiple corpuses (e.g. historical, cultural, document type, ...) analysing the differences in word embeddings can show the change in meaning and associations words may have</p>
+<h4 id="pre-trained-embeddings"><a class="header" href="#pre-trained-embeddings">Pre-trained Embeddings</a></h4>
+<p>It is common to apply pre-trained embeddings to niche NLP applications. </p>
+<p>This not only saves on training time, but allows embeddings to be trained on a much larger corpus than would be feasible for your specific application</p>
+<p>Word2vec, GloVe, and BERT all supply pre-trained embeddings from multiple difference corpuses and vector sizes. </p>
+<p>It may also be beneficial to unfix the weights in the final few layers of the embeddings so that the embeddings can adapt to the specific genre of the training corpus being used. </p>
+<p>Adding layers on top of the embeddings can also be useful for this task or to transform the embeddings into a different style (e.g. fencepost spans)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="evaluation-metrics"><a class="header" href="#evaluation-metrics">Evaluation Metrics</a></h1>
 <h2 id="rouge"><a class="header" href="#rouge">ROUGE</a></h2>
 <p>ROUGE is used to evaluate text summarisation.</p>
@@ -613,6 +619,28 @@
 <p>There are however <strong>Sociotechnical Issues</strong> as low resource language dataset may not be accurate or even correct. In addition, there is a large focus on english-other and little data for other language pairs</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="semantic-role-labelling"><a class="header" href="#semantic-role-labelling">Semantic Role Labelling</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="word-sense-disambiguation"><a class="header" href="#word-sense-disambiguation">Word Sense Disambiguation</a></h1>
+<p>Words are ambiguous as the same word may have multiple meanings, <strong>Word Sense Disambiguation (WSD)</strong> is the process of deciding the sense of a word given its context.</p>
+<p><strong>WordNet</strong> is a large hand-annotated corpus giving word sense definitions and relations between word senses. A <strong>synset</strong> is a collection of word senses which all share the same meaning, and a gloss (description) of the general meaning of the set.</p>
+<p>WordNet also describes the lexicographical categories of semantic fields, called <strong>supersenses</strong>. E.g. for nouns some of the supersenses are location, act, feeling...</p>
+<p>WSD is a sequence labelling task, which involves picking the correct sense for each word based on the context.</p>
+<p>A baseline algorithm would be to pick the most common word sense for each word. </p>
+<p>A better method of WSD is to:</p>
+<ul>
+<li>contextual embeddings (e.g. BERT)</li>
+<li>For each sense of words in the corpus: average each of the token embeddings for the sense to get a sense embedding</li>
+<li>Then use a nearest neighbour classifier (cosine similarity) to find the nearest word sense</li>
+</ul>
+<p>If we don't have sense for a word in our data, we can:</p>
+<ul>
+<li>Fall back to most common sense</li>
+<li>Use relations in Wordnet, in order:
+<ul>
+<li>If has children: average their embeddings</li>
+<li>If has hypernyms: average their embeddings</li>
+<li>else average the supersense embeddings</li>
+</ul>
+</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="question-answering"><a class="header" href="#question-answering">Question Answering</a></h1>
 
                     </main>

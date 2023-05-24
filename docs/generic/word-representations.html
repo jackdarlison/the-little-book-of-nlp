@@ -224,6 +224,12 @@
 <li>Implicit corpus bias</li>
 </ul>
 <p>With multiple corpuses (e.g. historical, cultural, document type, ...) analysing the differences in word embeddings can show the change in meaning and associations words may have</p>
+<h4 id="pre-trained-embeddings"><a class="header" href="#pre-trained-embeddings">Pre-trained Embeddings</a></h4>
+<p>It is common to apply pre-trained embeddings to niche NLP applications. </p>
+<p>This not only saves on training time, but allows embeddings to be trained on a much larger corpus than would be feasible for your specific application</p>
+<p>Word2vec, GloVe, and BERT all supply pre-trained embeddings from multiple difference corpuses and vector sizes. </p>
+<p>It may also be beneficial to unfix the weights in the final few layers of the embeddings so that the embeddings can adapt to the specific genre of the training corpus being used. </p>
+<p>Adding layers on top of the embeddings can also be useful for this task or to transform the embeddings into a different style (e.g. fencepost spans)</p>
 
                     </main>
 
